@@ -15,4 +15,3 @@ node_modules/
 ## Release files
 release
 *.zip
-/assets/application.css
