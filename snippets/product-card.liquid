@@ -1,7 +1,9 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
 <div class="w-full py-6 px-3">
   <div class="bg-white overflow-hidden">
     <a href="{{ product.url }}">
-      {% if product.featured_image %}
+      {% if current_variant.featured_image %}
         <div class="h-80 overflow-hidden relative">
           {% if product.compare_at_price > product.price %}
             {% render 'sale-badge' %}
@@ -20,11 +22,28 @@
     </a>
 
     <div class="flex flex-col p-4">
-      <span class="text-sm text-gray-400">{{ product.vendor }}</span>
+      <div id="variant-selects-{{ section.id }}" data-section="{{ section.id }}">
+        {% for option in product.options_with_values %}
+          {% assign variant_type = option.name | downcase %}
+          {% if variant_type == 'color' %}
+            <div class="space-x-2 flex mb-4">
+              {% for value in option.values %}
+                <button
+                  type="button"
+                  style="background-color: {{ value |  downcase }}"
+                  class="swatch ring ring-transparent ring-offset-2 rounded-full w-5 h-5 bg-red-500 hover:ring-blue-500"
+                  data-value="{{ value | escape }}"
+                ></button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <span class="text-sm">{{ product.vendor }}</span>
 
-      <a href="{{ product.url }}" class="text-gray-700 uppercase font-medium">{{ product.title }}</a>
+      <a href="{{ product.url }}" class="text-[#0A4874] uppercase font-medium">{{ product.title }}</a>
 
-      {% if product.compare_at_price > product.price %}
+      {% if current_variant.compare_at_price > current_variant.price %}
         <div class="flex space-x-2">
           <p class="text-gray-700 line-through">{{ product.compare_at_price | money }}</p>
           <p class="text-red-500">{{ product.price | money }}</p>
