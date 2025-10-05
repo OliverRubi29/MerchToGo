@@ -24,10 +24,19 @@
       <div class="space-x-2.5 flex mb-4 swatch-group">
         {% for value in option.values %}
           {% assign swatch_color = value.swatch.color %}
+
+          {% case block.settings.variant_swatch_shape %}
+            {% when 'swatch--circle' %}
+              {% assign shape_class = 'rounded-full' %}
+            {% when 'swatch--square' %}
+              {% assign shape_class = 'rounded-none' %}
+            {% else %}
+              {% assign shape_class = '' %}
+          {% endcase %}
           <button
             type="button"
             style="background-color: {{ swatch_color |  default: "#ccc" }}"
-            class="product-swatch swatch ring-2 ring-transparent ring-offset-2 rounded-full w-5 h-5 bg-red-500 hover:ring-blue-500 [&.active]:ring-blue-500"
+            class="product-swatch swatch ring-2 ring-transparent ring-offset-2 {{ shape_class }} w-5 h-5 bg-red-500 hover:ring-blue-500 [&.active]:ring-blue-500"
             data-variant-index="{{ forloop.index0 }}"
             data-variant-id="{{ value.variant.id }}"
             data-value="{{ value | escape }}"
@@ -50,7 +59,6 @@
 
       if (!parent) return;
 
-      
       const product_card = selected.closest('.product-card');
       if (!product_card) return;
 
@@ -77,6 +85,24 @@
 {
   "name": "Product Color Selector",
   "blocks": [],
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant_swatch_shape",
+      "label": "Variant Swatch Shape",
+      "options": [
+        {
+          "value": "swatch--circle",
+          "label": "Circle"
+        },
+        {
+          "value": "swatch--square",
+          "label": "Square"
+        }
+      ],
+      "default": "swatch--circle"
+    }
+  ],
   "presets": [{ "name": "Product Color Selector" }]
 }
 {% endschema %}
