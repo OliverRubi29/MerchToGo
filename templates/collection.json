@@ -39,11 +39,15 @@
                         },
                         "color_swatches": {
                             "type": "_product-color-selector"
+                        },
+                        "product-card-title": {
+                            "type": "_product-card-title"
                         }
                     },
                     "block_order": [
                         "product-image",
-                        "color_swatches"
+                        "color_swatches",
+                        "product-card-title"
                     ],
                 }
             },

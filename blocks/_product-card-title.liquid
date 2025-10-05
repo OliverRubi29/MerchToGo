@@ -1,0 +1,12 @@
+{% assign product = closest.product %}
+<div class="flex flex-col">
+  <span>{{ product.vendor }}</span>
+  <a href="{{ product.url }}" class="font-medium text-sky-900 text-md">{{ product.title }}</a>
+</div>
+{% schema %}
+{
+  "name": "Product Title",
+  "blocks": [],
+  "presets": [{ "name": "Product Title" }]
+}
+{% endschema %}
