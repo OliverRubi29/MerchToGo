@@ -1,3 +1,5 @@
-<div class="absolute left-0 top-0 px-2.5 py-1 border-red-500 rounded-full z-100 border-2">
-  <span class="text-red-500 font-bold">On Sale!</span>
-</div>
+{% if product.compare_at_price > product.price %}
+  <div class="absolute left-0 top-0 px-2.5 py-1 border-red-500 rounded-full z-100 border-2">
+    <span class="text-red-500 font-bold">On Sale!</span>
+  </div>
+{% endif %}

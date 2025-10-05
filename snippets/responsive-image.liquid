@@ -1,0 +1,7 @@
+{%- assign sizes = sizes | default: '200,352,832,1200,1920' | split: ',' -%}
+{%- capture srcset -%}
+  {%- for size in sizes -%}
+    {{ image | image_url: width: size }} {{ size }}w{% unless forloop.last %}, {% endunless %}
+  {%- endfor -%}
+{%- endcapture -%}
+{{ image | image_url: width: default_width | image_tag: class: image_class, srcset: srcset | strip }}

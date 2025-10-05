@@ -1,0 +1,22 @@
+{% liquid
+  assign product = closest.product
+-%}
+
+<div class="bg-white product-card" data-product-id="{{ product.id }}">
+  {% content_for 'blocks', closest.product: product %}
+</div>
+{% schema %}
+{
+  "name": "Product Card",
+  "blocks": [
+    {
+      "type": "_product-card-media"
+    },
+    {
+      "type": "_product-color-selector"
+    }
+  ],
+
+  "settings": []
+}
+{% endschema %}

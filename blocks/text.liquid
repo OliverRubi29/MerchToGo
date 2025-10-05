@@ -6,7 +6,7 @@
 {% enddoc %}
 
 <div
-  class="text {{ block.settings.text_style }}"
+  class="text font-bold mb-4 {{ block.settings.text_style }}"
   style="--text-align: {{ block.settings.alignment }}"
   {{ block.shopify_attributes }}
 >
@@ -16,13 +16,6 @@
 {% stylesheet %}
   .text {
     text-align: var(--text-align);
-  }
-  .text--title {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-  .text--subtitle {
-    font-size: 1.5rem;
   }
 {% endstylesheet %}
 
@@ -41,11 +34,11 @@
       "id": "text_style",
       "label": "t:labels.text_style",
       "options": [
-        { "value": "text--title", "label": "t:options.text_style.title" },
-        { "value": "text--subtitle", "label": "t:options.text_style.subtitle" },
-        { "value": "text--normal", "label": "t:options.text_style.normal" }
+        { "value": "text-4xl", "label": "t:options.text_style.title" },
+        { "value": "text-xl", "label": "t:options.text_style.subtitle" },
+        { "value": "text-normal", "label": "t:options.text_style.normal" }
       ],
-      "default": "text--title"
+      "default": "text-normal"
     },
     {
       "type": "text_alignment",

@@ -1,0 +1,56 @@
+{% assign product = closest.product %}
+<a href="{{ product.url }}">
+  {% if product.featured_image %}
+    <div class="h-80 bg-white overflow-hidden relative border rounded-xl p-5 border-gray-500/55">
+      <div class="overflow-hidden relative mx-auto product-image-gallery">
+        {% render 'sale-badge', product: product %}
+
+        {% render 'responsive-image',
+          image: product.featured_image,
+          default_width: 400,
+          image_class: 'object-cover transition duration-1000 ease-in-out hover:scale-105 transform w-full featured-image'
+        %}
+
+        {% for variant in product.variants %}
+          {%- assign secondary_image = variant.metafields.custom.secondary_image -%}
+
+          {% if variant.image %}
+            <div
+              class="absolute inset-0 invisible variant-images group"
+              data-variant-index="{{ forloop.index0 }}"
+              data-variant-id="{{ variant.id }}"
+            >
+              {% assign transition_class = "group-hover:scale-105 transition duration-100 ease-in-out transform" %}
+              {% if secondary_image %}
+                {% assign transition_class = "group-hover:opacity-0 opacity-100 transition-opacity duration-500 ease-in-out" %}
+                {{
+                  secondary_image
+                  | image_url: width: 400
+                  | image_tag:
+                    class: 'absolute inset-0 object-cover group-hover:opacity-100 opacity-0 transition-opacity duration-500 ease-in-out',
+                    loading: 'lazy'
+                }}
+              {% endif %}
+              {% assign image_class = "absolute inset-0 object-cover" | append: " " | append: transition_class %}
+              {{
+                variant.image
+                | image_url: width: 400
+                | image_tag:
+                  class: image_class,
+                  loading: 'lazy'
+              }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</a>
+
+{% schema %}
+{
+  "name": "Product Image",
+  "blocks": [],
+  "presets": [{ "name": "Product Image" }]
+}
+{% endschema %}

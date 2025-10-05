@@ -1,0 +1,82 @@
+{% assign product = closest.product %}
+<div id="variant-selects-{{ section.id }}-{{ product.id }}" data-section="{{ section.id }}" class="mt-4">
+  {% comment %}
+    {% if product.variants %}
+      <div class="space-x-2 flex mb-4">
+        {% for variant in product.variants %}
+          {% assign color = value %}
+          <button
+            type="button"
+            style="background-color: {{ value |  downcase }}"
+            class="swatch ring ring-transparent ring-offset-2 rounded-full w-5 h-5 bg-red-500 hover:ring-blue-500"
+            data-variant-index="{{ forloop.index0 }}"
+            data-value="{{ value | escape }}"
+          ></button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endcomment %}
+
+  {% for option in product.options_with_values %}
+    {% comment %} <h1>{{ option.values | map: 'swatch' | map: 'color' | join: '; ' }}</h1> {% endcomment %}
+    {% assign variant_type = option.name | downcase %}
+    {% if variant_type == 'color' %}
+      <div class="space-x-2.5 flex mb-4 swatch-group">
+        {% for value in option.values %}
+          {% assign swatch_color = value.swatch.color %}
+          <button
+            type="button"
+            style="background-color: {{ swatch_color |  default: "#ccc" }}"
+            class="product-swatch swatch ring-2 ring-transparent ring-offset-2 rounded-full w-5 h-5 bg-red-500 hover:ring-blue-500 [&.active]:ring-blue-500"
+            data-variant-index="{{ forloop.index0 }}"
+            data-variant-id="{{ value.variant.id }}"
+            data-value="{{ value | escape }}"
+            data-product-id="{{ product.id }}"
+          ></button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% comment %}
+  onclick per swatch, get data-variant-index, then target the product-images, hide the main image, show the variant image, if clicked again, return to normal
+{% endcomment %}
+
+{% javascript %}
+  document.querySelectorAll('.product-swatch').forEach((swatch) => {
+    swatch.addEventListener('click', function (event) {
+      const selected = event.target;
+      const swatch_group = selected.closest('.swatch-group');
+
+      if (!parent) return;
+
+      
+      const product_card = selected.closest('.product-card');
+      if (!product_card) return;
+
+      product_card
+        .querySelectorAll('.product-image-gallery .variant-images')
+        .forEach((el) => el.classList.add('invisible'));
+      if (selected.classList.contains('active')) {
+        swatch_group.querySelectorAll('.product-swatch').forEach((el) => el.classList.remove('active'));
+        product_card.querySelector('.product-image-gallery .featured-image').classList.remove('invisible');
+      } else {
+        swatch_group.querySelectorAll('.product-swatch').forEach((el) => el.classList.remove('active'));
+        selected.classList.add('active');
+        product_card.querySelector('.product-image-gallery .featured-image').classList.add('invisible');
+        const variant_id = selected.dataset.variantId;
+        product_card
+          .querySelector(`.product-image-gallery [data-variant-id="${variant_id}"]`)
+          .classList.toggle('invisible');
+      }
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Product Color Selector",
+  "blocks": [],
+  "presets": [{ "name": "Product Color Selector" }]
+}
+{% endschema %}
