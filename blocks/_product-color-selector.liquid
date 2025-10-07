@@ -41,6 +41,7 @@
             data-variant-id="{{ value.variant.id }}"
             data-value="{{ value | escape }}"
             data-product-id="{{ product.id }}"
+            data-is-selected="false"
           ></button>
         {% endfor %}
       </div>
@@ -54,30 +55,74 @@
 {% javascript %}
   document.querySelectorAll('.product-swatch').forEach((swatch) => {
     swatch.addEventListener('click', function (event) {
-      const selected = event.target;
-      const swatch_group = selected.closest('.swatch-group');
+      const swatch = event.target;
+      const swatch_group = swatch.closest('.swatch-group');
+      const variant_id = swatch.dataset.variantId;
 
-      if (!parent) return;
+      //swatch_group.querySelectorAll('.product-swatch').forEach((el) => (el.dataset.isSelected = false));
+      //swatch.dataset.isSelected = true;
 
-      const product_card = selected.closest('.product-card');
+      const product_card = swatch.closest('.product-card');
       if (!product_card) return;
+
+      select_variant_image(swatch, swatch_group, product_card, variant_id);
+
+      select_variant_price(swatch, swatch_group, product_card, variant_id);
+
+      if (swatch.dataset.isSelected === 'true') {
+        swatch.dataset.isSelected = 'false';
+      } else {
+        swatch_group.querySelectorAll('.product-swatch').forEach((el) => (el.dataset.isSelected = 'false'));
+        swatch.dataset.isSelected = 'true';
+      }
+    });
+
+    function select_variant_image(swatch, swatch_group, product_card, variant_id) {
+      if (!swatch) return;
 
       product_card
         .querySelectorAll('.product-image-gallery .variant-images')
         .forEach((el) => el.classList.add('invisible'));
-      if (selected.classList.contains('active')) {
+      if (swatch.dataset.isSelected === 'true') {
         swatch_group.querySelectorAll('.product-swatch').forEach((el) => el.classList.remove('active'));
         product_card.querySelector('.product-image-gallery .featured-image').classList.remove('invisible');
       } else {
         swatch_group.querySelectorAll('.product-swatch').forEach((el) => el.classList.remove('active'));
-        selected.classList.add('active');
+        swatch.classList.add('active');
         product_card.querySelector('.product-image-gallery .featured-image').classList.add('invisible');
-        const variant_id = selected.dataset.variantId;
         product_card
           .querySelector(`.product-image-gallery [data-variant-id="${variant_id}"]`)
           .classList.toggle('invisible');
       }
-    });
+    }
+
+    function select_variant_price(swatch, swatch_group, product_card, variant_id) {
+      if (!swatch) return;
+
+      const price_el = product_card.querySelector('.product-price-group');
+      if (!price_el) return;
+
+      if (swatch.dataset.isSelected === true) {
+        variant_id = product_card.dataset.defaultVariantId;
+      }
+
+      const variantPrice = JSON.parse(
+        document.getElementById(`product-price-${product_card.dataset.productId}-json`).textContent
+      );
+      const matchingVariant = variantPrice.find((item) => item.id == variant_id);
+      price_el.classList.remove('is-discounted');
+      product_card.querySelector('.product-badge.on-sale').classList.add('hidden');
+      if (matchingVariant) {
+        if (matchingVariant.discount_percent) {
+          price_el.classList.add('is-discounted');
+          console.log(product_card.querySelector('.product-badge.on-sale'));
+          product_card.querySelector('.product-badge.on-sale').classList.remove('hidden');
+        }
+        price_el.querySelector('.current-price').textContent = matchingVariant.price;
+        price_el.querySelector('.before-price').textContent = matchingVariant.compare_at_price;
+        price_el.querySelector('.discount').textContent = matchingVariant.discount_percent;
+      }
+    }
   });
 {% endjavascript %}
 

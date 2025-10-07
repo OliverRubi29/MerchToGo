@@ -1,0 +1,74 @@
+{% assign product = closest.product %}
+{% assign first_variant = product.selected_or_first_available_variant %}
+
+{% if first_variant.compare_at_price > first_variant.price %}
+  {% assign discount = first_variant.compare_at_price | minus: first_variant.price %}
+  {% assign discount_percent = discount | times: 100 | divided_by: first_variant.compare_at_price %}
+  {% assign discount_class = 'is-discounted' %}
+{% endif %}
+
+<div class="flex space-x-2 align-bottom items-baseline product-price-group group {{ discount_class  }} ">
+  <p class="text-gray-700 group-[.is-discounted]:block hidden line-through before-price">
+    {{ first_variant.compare_at_price | money }}
+  </p>
+  <p class=" group-[.is-discounted]:text-red-500 text-gray-900 current-price">{{ first_variant.price | money }}</p>
+
+  {% unless block.settings.show_discount_percent %}
+    {% assign display_class = 'hidden!' %}
+  {% endunless %}
+
+  <p class="text-gray-400 text-sm {{ display_class }} discount group-[.is-discounted]:block hidden">
+    {{ discount_percent | round: 0 | append: '% off' }}
+  </p>
+</div>
+
+<script id="product-price-{{ product.id }}-json" data-product-id="{{ product.id }}" type="application/json">
+  {%- assign product_array_json = "[" -%}
+  {%- for variant in product.variants -%}
+        {%- assign variant_id = variant.id -%}
+        {%- assign variant_price = variant.price | money | json -%}
+        {%- assign variant_compare_at_price = variant.compare_at_price | money | json -%}
+
+        {% assign discount_percent = 0 %}
+        {% if variant.compare_at_price > variant.price %}
+            {%- assign discount = variant.compare_at_price | minus: variant.price -%}
+            {%- assign discount_percent = discount | times: 100 | divided_by: variant.compare_at_price -%}
+            {%- assign discount_percent = discount_percent | round: 0 | append: '% off' | json -%}
+        {% endif %}
+
+        {%- capture current_product_json -%}
+          {
+            "id": {{ variant_id }},
+            "price": {{ variant_price }},
+            "compare_at_price": {{ variant_compare_at_price }},
+            "discount_percent": {{ discount_percent }}
+          }
+        {%- endcapture -%}
+        {%- assign product_array_json = product_array_json | append: current_product_json -%}
+        {%- unless forloop.last -%}
+            {%- assign product_array_json = product_array_json | append: ", " -%}
+        {%- endunless -%}
+  {%- endfor -%}
+  {%- assign product_array_json = product_array_json |  append: "]" -%}
+
+  {{ product_array_json }}
+</script>
+
+{% schema %}
+{
+  "name": "Product Price",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_discount_percent",
+      "label": "Show discount percent",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Price"
+    }
+  ]
+}
+{% endschema %}

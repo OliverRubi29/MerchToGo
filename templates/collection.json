@@ -42,12 +42,16 @@
                         },
                         "product-card-title": {
                             "type": "_product-card-title"
+                        },
+                        "product-card-price": {
+                            "type": "_product-card-price"
                         }
                     },
                     "block_order": [
                         "product-image",
                         "color_swatches",
-                        "product-card-title"
+                        "product-card-title",
+                        "product-card-price"
                     ],
                 }
             },

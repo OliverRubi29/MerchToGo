@@ -1,8 +1,7 @@
 {% liquid
   assign product = closest.product
 -%}
-
-<div class="bg-white product-card" data-product-id="{{ product.id }}">
+<div class="bg-white flex flex-col justify-center items-center md:items-start" data-product-id="{{ product.id }}" data-default-variant-id="{{ product.selected_or_first_available_variant.id }}">
   {% content_for 'blocks', closest.product: product %}
 </div>
 {% schema %}
@@ -17,6 +16,9 @@
     },
     {
       "type": "_product-card-title"
+    },
+    {
+      "type": "_product-card-price"
     }
   ],
 

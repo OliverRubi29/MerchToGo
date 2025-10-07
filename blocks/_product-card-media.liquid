@@ -1,14 +1,14 @@
 {% assign product = closest.product %}
-<a href="{{ product.url }}">
+<a href="{{ product.url }}" class="block mx-auto">
   {% if product.featured_image %}
-    <div class="h-80 bg-white overflow-hidden relative border rounded-xl p-5 border-gray-500/55">
+    <div class="flex flex-col justify-center h-80 max-w-80 w-full bg-white overflow-hidden relative border rounded-xl p-1 sm:p-5 border-gray-500/55">
       <div class="overflow-hidden relative mx-auto product-image-gallery">
         {% render 'sale-badge', product: product %}
 
         {% render 'responsive-image',
           image: product.featured_image,
           default_width: 400,
-          image_class: 'object-cover transition duration-500 ease-in-out hover:scale-105 transform w-full featured-image'
+          image_class: 'object-cover transition duration-500 ease-in-out hover:scale-105 transform featured-image'
         %}
 
         {% for variant in product.variants %}
