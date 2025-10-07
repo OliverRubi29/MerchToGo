@@ -15,6 +15,7 @@
             data-page="{{ paginate.current_page }}"
             data-product-id="{{ product.id }}"
             id="{{ section.id }}-{{ product.id }}"
+            data-default-variant-id="{{ product.selected_or_first_available_variant.id }}"
           >
             {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
           </div>

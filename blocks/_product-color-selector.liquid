@@ -1,24 +1,6 @@
 {% assign product = closest.product %}
 <div id="variant-selects-{{ section.id }}-{{ product.id }}" data-section="{{ section.id }}" class="mt-4">
-  {% comment %}
-    {% if product.variants %}
-      <div class="space-x-2 flex mb-4">
-        {% for variant in product.variants %}
-          {% assign color = value %}
-          <button
-            type="button"
-            style="background-color: {{ value |  downcase }}"
-            class="swatch ring ring-transparent ring-offset-2 rounded-full w-5 h-5 bg-red-500 hover:ring-blue-500"
-            data-variant-index="{{ forloop.index0 }}"
-            data-value="{{ value | escape }}"
-          ></button>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endcomment %}
-
   {% for option in product.options_with_values %}
-    {% comment %} <h1>{{ option.values | map: 'swatch' | map: 'color' | join: '; ' }}</h1> {% endcomment %}
     {% assign variant_type = option.name | downcase %}
     {% if variant_type == 'color' %}
       <div class="space-x-2.5 flex mb-4 swatch-group">
@@ -48,9 +30,6 @@
     {% endif %}
   {% endfor %}
 </div>
-{% comment %}
-  onclick per swatch, get data-variant-index, then target the product-images, hide the main image, show the variant image, if clicked again, return to normal
-{% endcomment %}
 
 {% javascript %}
   document.querySelectorAll('.product-swatch').forEach((swatch) => {
@@ -102,7 +81,7 @@
       const price_el = product_card.querySelector('.product-price-group');
       if (!price_el) return;
 
-      if (swatch.dataset.isSelected === true) {
+      if (swatch.dataset.isSelected === 'true') {
         variant_id = product_card.dataset.defaultVariantId;
       }
 
@@ -115,7 +94,6 @@
       if (matchingVariant) {
         if (matchingVariant.discount_percent) {
           price_el.classList.add('is-discounted');
-          console.log(product_card.querySelector('.product-badge.on-sale'));
           product_card.querySelector('.product-badge.on-sale').classList.remove('hidden');
         }
         price_el.querySelector('.current-price').textContent = matchingVariant.price;
